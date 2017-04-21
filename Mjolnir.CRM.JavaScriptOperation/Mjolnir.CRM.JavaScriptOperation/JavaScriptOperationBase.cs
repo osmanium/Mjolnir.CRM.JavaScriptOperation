@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.Xrm.Sdk;
 using Newtonsoft.Json;
 using System.IO;
-using Mjolnir.CRM.Common;
+using Mjolnir.CRM.Core;
 using Mjolnir.ConsoleCommandLine;
 
 namespace Mjolnir.CRM.JavaScriptOperation
@@ -15,7 +15,7 @@ namespace Mjolnir.CRM.JavaScriptOperation
         where TResponse : IJavaScriptOperationResponse, new()
         where TRequest : IJavaScriptOperationRequest
     {
-        public string ExecuteJsOperation(string input, CRMContext context)
+        public string Execute(string input, CrmContext context)
         {
             TRequest request = default(TRequest);
             TResponse response = new TResponse();
@@ -26,12 +26,12 @@ namespace Mjolnir.CRM.JavaScriptOperation
             try
             {
                 //Identify the request type
-                context.TracingService.Trace("DeserizalizeRequest started");
+                context.TracingService.TraceVerbose("DeserizalizeRequest started");
                 request = DeserizalizeRequest(input);
 
                 //Execute
-                context.TracingService.Trace("ExecuteInternal started");
-                response = ExecuteInternal(request, response, context);
+                context.TracingService.TraceVerbose("ExecuteInternal started");
+                response = ExecuteJavascriptOperation(request, response, context);
                 response.IsSuccesful = true;
             }
             catch (Exception ex)
@@ -40,11 +40,11 @@ namespace Mjolnir.CRM.JavaScriptOperation
             }
 
             //Serialize response
-            context.TracingService.Trace("SerializeResponse started");
+            context.TracingService.TraceVerbose("SerializeResponse started");
             return SerializeResponse(response);
         }
 
-        private static void HandleErrorResponse(TResponse response, out string errorMessage, out bool isError, Exception ex, CRMContext context)
+        private static void HandleErrorResponse(TResponse response, out string errorMessage, out bool isError, Exception ex, CrmContext context)
         {
             isError = true;
 
@@ -65,7 +65,7 @@ namespace Mjolnir.CRM.JavaScriptOperation
             if (response == null)
                 response = new TResponse();
 
-            context.TracingService.Trace("Error occured :\n" + errorMessage);
+            context.TracingService.TraceVerbose("Error occured :\n" + errorMessage);
             response.ErrorMessage = errorMessage;
         }
 
@@ -103,6 +103,6 @@ namespace Mjolnir.CRM.JavaScriptOperation
             return request;
         }
 
-        public abstract TResponse ExecuteInternal(TRequest req, TResponse res, CRMContext context);
+        public abstract TResponse ExecuteJavascriptOperation(TRequest req, TResponse res, CrmContext context);
     }
 }

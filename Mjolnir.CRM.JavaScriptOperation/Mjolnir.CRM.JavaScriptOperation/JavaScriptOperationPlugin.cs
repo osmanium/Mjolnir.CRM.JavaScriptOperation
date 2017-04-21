@@ -8,20 +8,20 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using Mjolnir.CRM.Common;
+using Mjolnir.CRM.Core;
 
 namespace Mjolnir.CRM.JavaScriptOperation
 {
     public class JavaScriptOperationPlugin : PluginBase
     {
-        public override void ExecuteInternal(CRMContext pluginContext)
+        public override void ExecuteInternal(CrmContext pluginContext)
         {
             #region Validation for correct plugin message and stage
             if (!pluginContext.PluginExecutionContext.PrimaryEntityName.Equals("mjolnir_jsoperation_io") &&
                     pluginContext.PluginExecutionContext.Stage != 40 &&
                     !pluginContext.PluginExecutionContext.MessageName.Equals("RetrieveMultiple"))
             {
-                pluginContext.TracingService.Trace("Plugin is not registered for required Entity, Message or Stage.");
+                pluginContext.TracingService.TraceError("Plugin is not registered for required Entity, Message or Stage.");
                 return;
             }
             #endregion
@@ -42,35 +42,35 @@ namespace Mjolnir.CRM.JavaScriptOperation
                     {
                         foreach (ConditionExpression expression in query.Criteria.Conditions)
                         {
-                            pluginContext.TracingService.Trace("Query Attribute = " + expression.AttributeName);
+                            pluginContext.TracingService.TraceVerbose("Query Attribute = " + expression.AttributeName);
 
                             if (expression.AttributeName.Equals("mjolnir_jsoperationname"))
                             {
                                 sOperation = expression.Values[0].ToString();
-                                pluginContext.TracingService.Trace("Operation Name = " + sOperation);
+                                pluginContext.TracingService.TraceVerbose("Operation Name = " + sOperation);
                             }
                             else if (expression.AttributeName.Equals("mjolnir_input"))
                             {
                                 sInputParameter = expression.Values[0].ToString();
-                                pluginContext.TracingService.Trace("Input = " + sInputParameter);
+                                pluginContext.TracingService.TraceVerbose("Input = " + sInputParameter);
                             }
                         }
                     }
                     else
                     {
-                        pluginContext.TracingService.Trace("Query Criteria Condition Count: " + query.Criteria.Conditions.Count.ToString() + " is not greater then zero");
+                        pluginContext.TracingService.TraceError("Query Criteria Condition Count: " + query.Criteria.Conditions.Count.ToString() + " is not greater then zero");
                         return;
                     }
                 }
                 else
                 {
-                    pluginContext.TracingService.Trace("pluginExecutionContext.InputParameters[ParameterName.Query] is not QueryExpression");
+                    pluginContext.TracingService.TraceError("pluginExecutionContext.InputParameters[ParameterName.Query] is not QueryExpression");
                     return;
                 }
             }
             else
             {
-                pluginContext.TracingService.Trace("Query does not exist in input parameters");
+                pluginContext.TracingService.TraceError("Query does not exist in input parameters");
                 return;
             }
             #endregion
@@ -113,26 +113,26 @@ namespace Mjolnir.CRM.JavaScriptOperation
                             entity["mjolnir_jsoperation_ioid"] = Guid.NewGuid();
                             outputEntities.Entities.Add(entity);
 
-                            pluginContext.TracingService.Trace("execution is completed");
+                            pluginContext.TracingService.TraceVerbose("execution is completed");
                         }
                         catch (Exception ex)
                         {
-                            pluginContext.TracingService.Trace($"error : {ex.Message}");
+                            pluginContext.TracingService.TraceError($"error : {ex.Message}");
                         }
                     }
                     else
                     {
-                        pluginContext.TracingService.Trace("executerInstance null");
+                        pluginContext.TracingService.TraceError("executerInstance null");
                     }
                 }
                 else
                 {
-                    pluginContext.TracingService.Trace("operationType is null");
+                    pluginContext.TracingService.TraceError("operationType is null");
                 }
             }
             else
             {
-                pluginContext.TracingService.Trace("assembly is null");
+                pluginContext.TracingService.TraceError("assembly is null");
             }
         }
     }

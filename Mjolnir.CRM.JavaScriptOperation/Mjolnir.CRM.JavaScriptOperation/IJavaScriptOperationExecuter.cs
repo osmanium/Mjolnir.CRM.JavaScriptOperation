@@ -1,5 +1,5 @@
 ﻿using Microsoft.Xrm.Sdk;
-using Mjolnir.CRM.Common;
+using Mjolnir.CRM.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +10,6 @@ namespace Mjolnir.CRM.JavaScriptOperation
 {
     public interface IJavaScriptOperationExecuter
     {
-        string ExecuteJsOperation(string input, CRMContext context);
+        string Execute(string input, CrmContext context);
     }
 }
