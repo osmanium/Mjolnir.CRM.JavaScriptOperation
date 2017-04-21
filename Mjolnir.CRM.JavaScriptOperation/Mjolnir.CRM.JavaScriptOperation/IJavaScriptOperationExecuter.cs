@@ -10,6 +10,6 @@ namespace Mjolnir.CRM.JavaScriptOperation
 {
     public interface IJavaScriptOperationExecuter
     {
-        string Execute(string input, CRMContext context);
+        string ExecuteJsOperation(string input, CRMContext context);
     }
 }

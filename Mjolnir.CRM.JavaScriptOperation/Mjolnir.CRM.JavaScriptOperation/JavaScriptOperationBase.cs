@@ -7,14 +7,15 @@ using Microsoft.Xrm.Sdk;
 using Newtonsoft.Json;
 using System.IO;
 using Mjolnir.CRM.Common;
+using Mjolnir.ConsoleCommandLine;
 
 namespace Mjolnir.CRM.JavaScriptOperation
 {
-    public abstract class JavaScriptOperationBase<TRequest, TResponse> : IJavaScriptOperationExecuter
+    public abstract class JavaScriptOperationBase<TRequest, TResponse> : ConsoleCommandBase, IJavaScriptOperationExecuter
         where TResponse : IJavaScriptOperationResponse, new()
         where TRequest : IJavaScriptOperationRequest
     {
-        public string Execute(string input, CRMContext context)
+        public string ExecuteJsOperation(string input, CRMContext context)
         {
             TRequest request = default(TRequest);
             TResponse response = new TResponse();
